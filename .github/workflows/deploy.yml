@@ -37,14 +37,16 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
-          bundler-cache: true
-
+      
+      - name: Install Jekyll
+        run: gem install jekyll
+      
       - name: Setup GitHub Pages
         id: pages
         uses: actions/configure-pages@v5
 
       - name: Build Photo Stream with Jekyll
-        run: bundle exec jekyll build --destination ./_site
+        run: jekyll build --destination ./_site
         env:
           JEKYLL_ENV: production
 
