@@ -20,35 +20,24 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Install PhotoStream Image & Video Dependencies
-        run: |
-            sudo apt-get update
-            sudo apt-get install -y \
-              -o Acquire::Retries=3 \
-              -o Acquire::http::Timeout="30" \
-              --no-install-recommends \
-              libvips-dev \
-              libheif-dev \
-              libjpeg-dev \
-              libpng-dev \
-              ffmpeg
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2'
-      
-      - name: Install Jekyll
-        run: gem install jekyll
-      
       - name: Setup GitHub Pages
         id: pages
         uses: actions/configure-pages@v5
 
-      - name: Build Photo Stream with Jekyll
-        run: jekyll build --destination ./_site
-        env:
-          JEKYLL_ENV: production
+      - name: Build Photo Stream with Docker image
+        run: |
+          mkdir -p _site
+          docker run --rm \
+            --env-file .env \
+            -v "$PWD/photos:/photo-stream/photos" \
+            -v "$PWD/_site:/photo-stream/_site" \
+            --entrypoint bundle \
+            waschinski/photo-stream:latest \
+            exec jekyll build
+
+      - name: Fix artifact permissions
+        run: sudo chown -R "$USER" _site
 
       - name: Upload Build Artifact
         uses: actions/upload-pages-artifact@v3
