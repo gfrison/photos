@@ -1,5 +1,5 @@
 url: "https://gfrison.com"
-baseurl: "/photos"
+baseurl: ""
 
 # Photo Stream image settings (adjust as needed)
 resize_to_limit: [2048, 2048]
