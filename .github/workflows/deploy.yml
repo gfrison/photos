@@ -34,7 +34,7 @@ jobs:
             -v "$PWD/_site:/photo-stream/_site" \
             --entrypoint bundle \
             waschinski/photo-stream:latest \
-            exec jekyll build
+            exec jekyll build --baseurl /photos
 
       - name: Fix artifact permissions
         run: sudo chown -R "$USER" _site
