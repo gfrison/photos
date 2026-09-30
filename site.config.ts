@@ -59,8 +59,7 @@ export const siteConfig: SiteConfig = {
   author: {
     name: "Giancarlo Frison",
     url: "https://gfrison.com",
-    avatar:
-      "https://raw.githubusercontent.com/vsxd/afilmory-vercel/main/logo.png",
+    avatar: "https://gfrison.com/assets/images/profile-g.png",
   },
   social: {
     github: "gfrison",
