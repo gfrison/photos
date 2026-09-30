@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PHOTO_STORAGE_PROVIDER: local
-      LOCAL_PHOTOS_PATH: photos
+      LOCAL_PHOTOS_PATH: photos-wm
       LOCAL_PHOTOS_BASE_URL: /originals
       # Served as a GitHub Pages project page under the org page's custom domain.
       BASE_PATH: /photos
@@ -54,6 +54,10 @@ jobs:
 
       - name: Build static gallery
         run: pnpm build
+      - name: Watermark photos
+        run: node packages/builder/scripts/watermark.mjs photos photos-wm
+        env:
+          WATERMARK_TEXT: "gfrison.com"
 
       - name: Add SPA fallback for client-only routes
         run: cp apps/web/dist/index.html apps/web/dist/404.html
