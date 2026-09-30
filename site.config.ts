@@ -64,7 +64,7 @@ export const siteConfig: SiteConfig = {
   social: {
     github: "gfrison",
     twitter: "gfrison",
-    rss: true,
+    rss: false,
   },
   feed: {
     folo: {
