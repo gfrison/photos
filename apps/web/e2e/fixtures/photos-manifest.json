@@ -1,0 +1,913 @@
+{
+  "schema": "afilmory.manifest",
+  "version": 2,
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "source": {
+    "provider": "s3",
+    "bucket": "afilmory-synthetic-fixture",
+    "region": "us-east-1",
+    "prefix": "fixtures/",
+    "customDomain": "https://photos.fixture.test"
+  },
+  "photos": [
+    {
+      "id": "SYNTH0001",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0001.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0001.jpg",
+      "thumbHash": "605a0a159080878777888887878887878078f78878",
+      "width": 6000,
+      "height": 4000,
+      "aspectRatio": 1.5,
+      "s3Key": "fixtures/SYNTH0001.jpg",
+      "lastModified": "2026-01-02T00:00:00.000Z",
+      "size": 2000000,
+      "etag": "\"synthetic-synth0001\"",
+      "exif": {
+        "DateTimeOriginal": "2024-02-14T09:30:00.000Z",
+        "ImageWidth": 6000,
+        "ImageHeight": 4000,
+        "Make": "Lumina",
+        "Model": "LX-7",
+        "LensMake": "Lumina",
+        "LensModel": "Vista 35mm F1.8",
+        "ISO": 100,
+        "FNumber": 1.8,
+        "ExposureTime": "1/250",
+        "FocalLength": "35.0 mm",
+        "GPSLatitude": 12.482,
+        "GPSLatitudeRef": "N",
+        "GPSLongitude": -33.217,
+        "GPSLongitudeRef": "W"
+      },
+      "toneAnalysis": {
+        "toneType": "normal",
+        "brightness": 30,
+        "contrast": 40,
+        "shadowRatio": 0.1,
+        "highlightRatio": 0.1
+      },
+      "location": {
+        "latitude": 12.482,
+        "longitude": -33.217,
+        "admin": {
+          "country": "Auroria",
+          "countryCode": "XA",
+          "region": "Northreach",
+          "city": "Port Meridian"
+        },
+        "adminI18n": {
+          "en": {
+            "country": "Auroria",
+            "countryCode": "XA",
+            "region": "Northreach",
+            "city": "Port Meridian"
+          }
+        },
+        "country": "Auroria",
+        "city": "Port Meridian"
+      },
+      "title": "SYNTH0001",
+      "dateTaken": "2024-02-14T09:30:00.000Z",
+      "tags": [
+        "landscape",
+        "night"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0002",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0002.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0002.jpg",
+      "thumbHash": "e0560535087878807888887888877788888f780878",
+      "width": 4000,
+      "height": 6000,
+      "aspectRatio": 0.6666666666666666,
+      "s3Key": "fixtures/SYNTH0002.jpg",
+      "lastModified": "2026-01-02T01:00:00.000Z",
+      "size": 2137531,
+      "etag": "\"synthetic-synth0002\"",
+      "exif": {
+        "DateTimeOriginal": "2024-04-01T09:43:00.000Z",
+        "ImageWidth": 4000,
+        "ImageHeight": 6000,
+        "Make": "Lumina",
+        "Model": "LX-7",
+        "LensMake": "Lumina",
+        "LensModel": "Vista 35mm F1.8",
+        "ISO": 200,
+        "FNumber": 2.8,
+        "ExposureTime": "1/60",
+        "FocalLength": "35.0 mm",
+        "GPSLatitude": 12.495,
+        "GPSLatitudeRef": "N",
+        "GPSLongitude": -33.2,
+        "GPSLongitudeRef": "W"
+      },
+      "toneAnalysis": {
+        "toneType": "high-contrast",
+        "brightness": 37,
+        "contrast": 51,
+        "shadowRatio": 0.18,
+        "highlightRatio": 0.19
+      },
+      "location": {
+        "latitude": 12.495,
+        "longitude": -33.2,
+        "admin": {
+          "country": "Auroria",
+          "countryCode": "XA",
+          "region": "Northreach",
+          "city": "Port Meridian"
+        },
+        "adminI18n": {
+          "en": {
+            "country": "Auroria",
+            "countryCode": "XA",
+            "region": "Northreach",
+            "city": "Port Meridian"
+          }
+        },
+        "country": "Auroria",
+        "city": "Port Meridian"
+      },
+      "title": "SYNTH0002",
+      "dateTaken": "2024-04-01T09:43:00.000Z",
+      "tags": [
+        "portrait"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0003",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0003.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0003.jpg",
+      "thumbHash": "60b70224828087877377787888778073083887",
+      "width": 5760,
+      "height": 3240,
+      "aspectRatio": 1.7777777777777777,
+      "s3Key": "fixtures/SYNTH0003.jpg",
+      "lastModified": "2026-01-02T02:00:00.000Z",
+      "size": 2275062,
+      "etag": "\"synthetic-synth0003\"",
+      "exif": {
+        "DateTimeOriginal": "2024-05-18T09:56:00.000Z",
+        "ImageWidth": 5760,
+        "ImageHeight": 3240,
+        "Make": "Lumina",
+        "Model": "LX-7",
+        "LensMake": "Lumina",
+        "LensModel": "Vista 35mm F1.8",
+        "ISO": 400,
+        "FNumber": 4,
+        "ExposureTime": "1/1000",
+        "FocalLength": "35.0 mm"
+      },
+      "toneAnalysis": {
+        "toneType": "low-key",
+        "brightness": 44,
+        "contrast": 62,
+        "shadowRatio": 0.26,
+        "highlightRatio": 0.28
+      },
+      "location": null,
+      "title": "SYNTH0003",
+      "dateTaken": "2024-05-18T09:56:00.000Z",
+      "tags": [
+        "street",
+        "macro"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0004",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0004.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0004.jpg",
+      "thumbHash": "629a01270e80878788878888788888788878f888877f7808",
+      "width": 4000,
+      "height": 4000,
+      "aspectRatio": 1,
+      "s3Key": "fixtures/SYNTH0004.jpg",
+      "lastModified": "2026-01-02T03:00:00.000Z",
+      "size": 2412593,
+      "etag": "\"synthetic-synth0004\"",
+      "exif": {
+        "DateTimeOriginal": "2024-07-04T10:09:00.000Z",
+        "ImageWidth": 4000,
+        "ImageHeight": 4000,
+        "Make": "Lumina",
+        "Model": "LX-7",
+        "LensMake": "Lumina",
+        "LensModel": "Vista 35mm F1.8",
+        "ISO": 800,
+        "FNumber": 1.8,
+        "ExposureTime": "1/125",
+        "FocalLength": "35.0 mm"
+      },
+      "toneAnalysis": {
+        "toneType": "high-key",
+        "brightness": 51,
+        "contrast": 73,
+        "shadowRatio": 0.34,
+        "highlightRatio": 0.37
+      },
+      "location": null,
+      "title": "SYNTH0004",
+      "dateTaken": "2024-07-04T10:09:00.000Z",
+      "tags": [
+        "night"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0005",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0005.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0005.jpg",
+      "thumbHash": "a3d5050d908787888088878787787888787f870888",
+      "width": 4096,
+      "height": 3072,
+      "aspectRatio": 1.3333333333333333,
+      "s3Key": "fixtures/SYNTH0005.jpg",
+      "lastModified": "2026-01-02T04:00:00.000Z",
+      "size": 2550124,
+      "etag": "\"synthetic-synth0005\"",
+      "exif": {
+        "DateTimeOriginal": "2024-08-20T10:22:00.000Z",
+        "ImageWidth": 4096,
+        "ImageHeight": 3072,
+        "Make": "Lumina",
+        "Model": "LX-7",
+        "LensMake": "Polaris",
+        "LensModel": "Orbit 24-70mm F4",
+        "ISO": 1600,
+        "FNumber": 2.8,
+        "ExposureTime": "1/250",
+        "FocalLength": "24.0 mm",
+        "GPSLatitude": -21.299,
+        "GPSLatitudeRef": "S",
+        "GPSLongitude": 71.91,
+        "GPSLongitudeRef": "E"
+      },
+      "toneAnalysis": {
+        "toneType": "normal",
+        "brightness": 58,
+        "contrast": 84,
+        "shadowRatio": 0.42,
+        "highlightRatio": 0.46
+      },
+      "location": {
+        "latitude": -21.299,
+        "longitude": 71.91,
+        "admin": {
+          "country": "Borealund",
+          "countryCode": "XB",
+          "region": "Eastvale",
+          "city": "Solhavn"
+        },
+        "adminI18n": {
+          "en": {
+            "country": "Borealund",
+            "countryCode": "XB",
+            "region": "Eastvale",
+            "city": "Solhavn"
+          }
+        },
+        "country": "Borealund",
+        "city": "Solhavn"
+      },
+      "title": "SYNTH0005",
+      "dateTaken": "2024-08-20T10:22:00.000Z",
+      "tags": [
+        "travel",
+        "portrait"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0006",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0006.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0006.jpg",
+      "thumbHash": "a399061d8680878782878878877887878082f7d878",
+      "width": 6000,
+      "height": 4000,
+      "aspectRatio": 1.5,
+      "s3Key": "fixtures/SYNTH0006.jpg",
+      "lastModified": "2026-01-02T05:00:00.000Z",
+      "size": 2687655,
+      "etag": "\"synthetic-synth0006\"",
+      "exif": {
+        "DateTimeOriginal": "2024-10-06T10:35:00.000Z",
+        "ImageWidth": 6000,
+        "ImageHeight": 4000,
+        "Make": "Lumina",
+        "Model": "LX-7",
+        "LensMake": "Polaris",
+        "LensModel": "Orbit 24-70mm F4",
+        "ISO": 3200,
+        "FNumber": 4,
+        "ExposureTime": "1/60",
+        "FocalLength": "24.0 mm",
+        "GPSLatitude": -21.286,
+        "GPSLatitudeRef": "S",
+        "GPSLongitude": 71.927,
+        "GPSLongitudeRef": "E"
+      },
+      "toneAnalysis": {
+        "toneType": "high-contrast",
+        "brightness": 65,
+        "contrast": 50,
+        "shadowRatio": 0.5,
+        "highlightRatio": 0.1
+      },
+      "location": {
+        "latitude": -21.286,
+        "longitude": 71.927,
+        "admin": {
+          "country": "Borealund",
+          "countryCode": "XB",
+          "region": "Eastvale",
+          "city": "Solhavn"
+        },
+        "adminI18n": {
+          "en": {
+            "country": "Borealund",
+            "countryCode": "XB",
+            "region": "Eastvale",
+            "city": "Solhavn"
+          }
+        },
+        "country": "Borealund",
+        "city": "Solhavn"
+      },
+      "title": "SYNTH0006",
+      "dateTaken": "2024-10-06T10:35:00.000Z",
+      "tags": [
+        "macro"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0007",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0007.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0007.jpg",
+      "thumbHash": "2238093c828087878878888788887f88f87787",
+      "width": 3840,
+      "height": 2160,
+      "aspectRatio": 1.7777777777777777,
+      "s3Key": "fixtures/SYNTH0007.jpg",
+      "lastModified": "2026-01-02T06:00:00.000Z",
+      "size": 2825186,
+      "etag": "\"synthetic-synth0007\"",
+      "exif": {
+        "DateTimeOriginal": "2024-11-22T10:48:00.000Z",
+        "ImageWidth": 3840,
+        "ImageHeight": 2160,
+        "Make": "Lumina",
+        "Model": "LX-7",
+        "LensMake": "Polaris",
+        "LensModel": "Orbit 24-70mm F4",
+        "ISO": 100,
+        "FNumber": 1.8,
+        "ExposureTime": "1/1000",
+        "FocalLength": "24.0 mm"
+      },
+      "toneAnalysis": {
+        "toneType": "low-key",
+        "brightness": 72,
+        "contrast": 61,
+        "shadowRatio": 0.58,
+        "highlightRatio": 0.19
+      },
+      "location": null,
+      "title": "SYNTH0007",
+      "dateTaken": "2024-11-22T10:48:00.000Z",
+      "tags": [
+        "landscape",
+        "night"
+      ],
+      "description": "",
+      "isHDR": true
+    },
+    {
+      "id": "SYNTH0008",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0008.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0008.jpg",
+      "thumbHash": "e0750a2e0c787808888878888887888878888780880778",
+      "width": 4000,
+      "height": 5000,
+      "aspectRatio": 0.8,
+      "s3Key": "fixtures/SYNTH0008.jpg",
+      "lastModified": "2026-01-02T07:00:00.000Z",
+      "size": 2962717,
+      "etag": "\"synthetic-synth0008\"",
+      "exif": {
+        "DateTimeOriginal": "2025-01-08T11:01:00.000Z",
+        "ImageWidth": 4000,
+        "ImageHeight": 5000,
+        "Make": "Lumina",
+        "Model": "LX-7",
+        "LensMake": "Lumina",
+        "LensModel": "Vista 35mm F1.8",
+        "ISO": 200,
+        "FNumber": 2.8,
+        "ExposureTime": "1/125",
+        "FocalLength": "35.0 mm"
+      },
+      "toneAnalysis": {
+        "toneType": "high-key",
+        "brightness": 79,
+        "contrast": 72,
+        "shadowRatio": 0.1,
+        "highlightRatio": 0.28
+      },
+      "location": null,
+      "title": "SYNTH0008",
+      "dateTaken": "2025-01-08T11:01:00.000Z",
+      "tags": [
+        "portrait"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0009",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0009.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0009.jpg",
+      "thumbHash": "600a06058a80878772887788787777788f7df7d778",
+      "width": 6000,
+      "height": 4000,
+      "aspectRatio": 1.5,
+      "s3Key": "fixtures/SYNTH0009.jpg",
+      "lastModified": "2026-01-02T08:00:00.000Z",
+      "size": 3100248,
+      "etag": "\"synthetic-synth0009\"",
+      "exif": {
+        "DateTimeOriginal": "2025-02-24T11:14:00.000Z",
+        "ImageWidth": 6000,
+        "ImageHeight": 4000,
+        "Make": "Lumina",
+        "Model": "LX-7",
+        "LensMake": "Lumina",
+        "LensModel": "Vista 35mm F1.8",
+        "ISO": 400,
+        "FNumber": 4,
+        "ExposureTime": "1/250",
+        "FocalLength": "35.0 mm",
+        "GPSLatitude": 29.018,
+        "GPSLatitudeRef": "N",
+        "GPSLongitude": -161.202,
+        "GPSLongitudeRef": "W"
+      },
+      "toneAnalysis": {
+        "toneType": "normal",
+        "brightness": 36,
+        "contrast": 83,
+        "shadowRatio": 0.18,
+        "highlightRatio": 0.37
+      },
+      "location": {
+        "latitude": 29.018,
+        "longitude": -161.202,
+        "admin": {
+          "country": "Cindralia",
+          "countryCode": "XC",
+          "region": "Westmark",
+          "city": "Emberfall"
+        },
+        "adminI18n": {
+          "en": {
+            "country": "Cindralia",
+            "countryCode": "XC",
+            "region": "Westmark",
+            "city": "Emberfall"
+          }
+        },
+        "country": "Cindralia",
+        "city": "Emberfall"
+      },
+      "title": "SYNTH0009",
+      "dateTaken": "2025-02-24T11:14:00.000Z",
+      "tags": [
+        "street",
+        "macro"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0010",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0010.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0010.jpg",
+      "thumbHash": "2076012a8c808787778888887f87087888",
+      "width": 6144,
+      "height": 2048,
+      "aspectRatio": 3,
+      "s3Key": "fixtures/SYNTH0010.jpg",
+      "lastModified": "2026-01-02T09:00:00.000Z",
+      "size": 3237779,
+      "etag": "\"synthetic-synth0010\"",
+      "exif": {
+        "DateTimeOriginal": "2025-04-12T11:27:00.000Z",
+        "ImageWidth": 6144,
+        "ImageHeight": 2048,
+        "Make": "Lumina",
+        "Model": "LX-7",
+        "LensMake": "Polaris",
+        "LensModel": "Orbit 24-70mm F4",
+        "ISO": 800,
+        "FNumber": 1.8,
+        "ExposureTime": "1/60",
+        "FocalLength": "24.0 mm"
+      },
+      "toneAnalysis": {
+        "toneType": "high-contrast",
+        "brightness": 43,
+        "contrast": 49,
+        "shadowRatio": 0.26,
+        "highlightRatio": 0.46
+      },
+      "location": null,
+      "title": "SYNTH0010",
+      "dateTaken": "2025-04-12T11:27:00.000Z",
+      "tags": [
+        "night"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0011",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0011.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0011.jpg",
+      "thumbHash": "23c8023d828787887078878777778878888077f888",
+      "width": 4032,
+      "height": 3024,
+      "aspectRatio": 1.3333333333333333,
+      "s3Key": "fixtures/SYNTH0011.jpg",
+      "lastModified": "2026-01-02T10:00:00.000Z",
+      "size": 3375310,
+      "etag": "\"synthetic-synth0011\"",
+      "exif": {
+        "DateTimeOriginal": "2025-05-29T11:40:00.000Z",
+        "ImageWidth": 4032,
+        "ImageHeight": 3024,
+        "Make": "Polaris",
+        "Model": "P1",
+        "LensMake": "Polaris",
+        "LensModel": "Orbit 24-70mm F4",
+        "ISO": 1600,
+        "FNumber": 2.8,
+        "ExposureTime": "1/1000",
+        "FocalLength": "24.0 mm"
+      },
+      "toneAnalysis": {
+        "toneType": "low-key",
+        "brightness": 50,
+        "contrast": 60,
+        "shadowRatio": 0.34,
+        "highlightRatio": 0.1
+      },
+      "location": null,
+      "title": "SYNTH0011",
+      "dateTaken": "2025-05-29T11:40:00.000Z",
+      "tags": [
+        "travel",
+        "portrait"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0012",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0012.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0012.jpg",
+      "thumbHash": "a379011d0672778078887877777778887d7fd7f878",
+      "width": 3024,
+      "height": 4032,
+      "aspectRatio": 0.75,
+      "s3Key": "fixtures/SYNTH0012.jpg",
+      "lastModified": "2026-01-02T11:00:00.000Z",
+      "size": 3512841,
+      "etag": "\"synthetic-synth0012\"",
+      "exif": {
+        "DateTimeOriginal": "2025-07-15T11:53:00.000Z",
+        "ImageWidth": 3024,
+        "ImageHeight": 4032,
+        "Make": "Polaris",
+        "Model": "P1",
+        "LensMake": "Polaris",
+        "LensModel": "Orbit 24-70mm F4",
+        "ISO": 3200,
+        "FNumber": 4,
+        "ExposureTime": "1/125",
+        "FocalLength": "24.0 mm"
+      },
+      "toneAnalysis": {
+        "toneType": "high-key",
+        "brightness": 57,
+        "contrast": 71,
+        "shadowRatio": 0.42,
+        "highlightRatio": 0.19
+      },
+      "location": null,
+      "title": "SYNTH0012",
+      "dateTaken": "2025-07-15T11:53:00.000Z",
+      "tags": [
+        "macro"
+      ],
+      "description": "",
+      "video": {
+        "type": "live-photo",
+        "videoUrl": "/thumbnails/SYNTH0012.webm",
+        "s3Key": "fixtures/SYNTH0012.webm"
+      }
+    },
+    {
+      "id": "SYNTH0013",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0013.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0013.jpg",
+      "thumbHash": "6325060d9080878777888878878887777087088788",
+      "width": 6000,
+      "height": 4000,
+      "aspectRatio": 1.5,
+      "s3Key": "fixtures/SYNTH0013.jpg",
+      "lastModified": "2026-01-02T12:00:00.000Z",
+      "size": 3650372,
+      "etag": "\"synthetic-synth0013\"",
+      "exif": {
+        "DateTimeOriginal": "2025-08-31T12:06:00.000Z",
+        "ImageWidth": 6000,
+        "ImageHeight": 4000,
+        "Make": "Polaris",
+        "Model": "P1",
+        "LensMake": "Polaris",
+        "LensModel": "Orbit 24-70mm F4",
+        "ISO": 100,
+        "FNumber": 1.8,
+        "ExposureTime": "1/250",
+        "FocalLength": "24.0 mm",
+        "GPSLatitude": -47.473,
+        "GPSLatitudeRef": "S",
+        "GPSLongitude": 155.285,
+        "GPSLongitudeRef": "E"
+      },
+      "toneAnalysis": {
+        "toneType": "normal",
+        "brightness": 64,
+        "contrast": 82,
+        "shadowRatio": 0.5,
+        "highlightRatio": 0.28
+      },
+      "location": {
+        "latitude": -47.473,
+        "longitude": 155.285,
+        "admin": {
+          "country": "Drovania",
+          "countryCode": "XD",
+          "region": "Southgate",
+          "city": "Vantle"
+        },
+        "adminI18n": {
+          "en": {
+            "country": "Drovania",
+            "countryCode": "XD",
+            "region": "Southgate",
+            "city": "Vantle"
+          }
+        },
+        "country": "Drovania",
+        "city": "Vantle"
+      },
+      "title": "SYNTH0013",
+      "dateTaken": "2025-08-31T12:06:00.000Z",
+      "tags": [
+        "landscape",
+        "night"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0014",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0014.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0014.jpg",
+      "thumbHash": "626a0a250e7878808888887878877878788088f888",
+      "width": 4000,
+      "height": 6000,
+      "aspectRatio": 0.6666666666666666,
+      "s3Key": "fixtures/SYNTH0014.jpg",
+      "lastModified": "2026-01-02T13:00:00.000Z",
+      "size": 3787903,
+      "etag": "\"synthetic-synth0014\"",
+      "exif": {
+        "DateTimeOriginal": "2025-10-17T12:19:00.000Z",
+        "ImageWidth": 4000,
+        "ImageHeight": 6000,
+        "Make": "Polaris",
+        "Model": "P1",
+        "LensMake": "Lumina",
+        "LensModel": "Vista 35mm F1.8",
+        "ISO": 200,
+        "FNumber": 2.8,
+        "ExposureTime": "1/60",
+        "FocalLength": "35.0 mm"
+      },
+      "toneAnalysis": {
+        "toneType": "high-contrast",
+        "brightness": 71,
+        "contrast": 48,
+        "shadowRatio": 0.58,
+        "highlightRatio": 0.37
+      },
+      "location": null,
+      "title": "SYNTH0014",
+      "dateTaken": "2025-10-17T12:19:00.000Z",
+      "tags": [
+        "portrait"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0015",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0015.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0015.jpg",
+      "thumbHash": "a04705258480878772888777787777887f7d082788",
+      "width": 5472,
+      "height": 3648,
+      "aspectRatio": 1.5,
+      "s3Key": "fixtures/SYNTH0015.jpg",
+      "lastModified": "2026-01-02T14:00:00.000Z",
+      "size": 3925434,
+      "etag": "\"synthetic-synth0015\"",
+      "exif": {
+        "DateTimeOriginal": "2025-12-03T12:32:00.000Z",
+        "ImageWidth": 5472,
+        "ImageHeight": 3648,
+        "Make": "Polaris",
+        "Model": "P1",
+        "LensMake": "Polaris",
+        "LensModel": "Orbit 24-70mm F4",
+        "ISO": 400,
+        "FNumber": 4,
+        "ExposureTime": "1/1000",
+        "FocalLength": "24.0 mm"
+      },
+      "toneAnalysis": {
+        "toneType": "low-key",
+        "brightness": 78,
+        "contrast": 59,
+        "shadowRatio": 0.1,
+        "highlightRatio": 0.46
+      },
+      "location": null,
+      "title": "SYNTH0015",
+      "dateTaken": "2025-12-03T12:32:00.000Z",
+      "tags": [
+        "street",
+        "macro"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0016",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0016.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0016.jpg",
+      "thumbHash": "e0a606358670878788888888888887887078088877",
+      "width": 4000,
+      "height": 3000,
+      "aspectRatio": 1.3333333333333333,
+      "s3Key": "fixtures/SYNTH0016.jpg",
+      "lastModified": "2026-01-02T15:00:00.000Z",
+      "size": 4062965,
+      "etag": "\"synthetic-synth0016\"",
+      "exif": {
+        "DateTimeOriginal": "2026-01-19T12:45:00.000Z",
+        "ImageWidth": 4000,
+        "ImageHeight": 3000,
+        "Make": "Polaris",
+        "Model": "P1",
+        "LensMake": "Lumina",
+        "LensModel": "Vista 35mm F1.8",
+        "ISO": 800,
+        "FNumber": 1.8,
+        "ExposureTime": "1/125",
+        "FocalLength": "35.0 mm"
+      },
+      "toneAnalysis": {
+        "toneType": "high-key",
+        "brightness": 35,
+        "contrast": 70,
+        "shadowRatio": 0.18,
+        "highlightRatio": 0.1
+      },
+      "location": null,
+      "title": "SYNTH0016",
+      "dateTaken": "2026-01-19T12:45:00.000Z",
+      "tags": [
+        "night"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0017",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0017.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0017.jpg",
+      "thumbHash": "a0ba0115908787888087878788787887878f88f788",
+      "width": 6000,
+      "height": 4000,
+      "aspectRatio": 1.5,
+      "s3Key": "fixtures/SYNTH0017.jpg",
+      "lastModified": "2026-01-02T16:00:00.000Z",
+      "size": 4200496,
+      "etag": "\"synthetic-synth0017\"",
+      "exif": {
+        "DateTimeOriginal": "2026-03-07T12:58:00.000Z",
+        "ImageWidth": 6000,
+        "ImageHeight": 4000,
+        "Make": "Polaris",
+        "Model": "P1",
+        "LensMake": "Polaris",
+        "LensModel": "Orbit 24-70mm F4",
+        "ISO": 1600,
+        "FNumber": 2.8,
+        "ExposureTime": "1/250",
+        "FocalLength": "24.0 mm"
+      },
+      "toneAnalysis": {
+        "toneType": "normal",
+        "brightness": 42,
+        "contrast": 81,
+        "shadowRatio": 0.26,
+        "highlightRatio": 0.19
+      },
+      "location": null,
+      "title": "SYNTH0017",
+      "dateTaken": "2026-03-07T12:58:00.000Z",
+      "tags": [
+        "travel",
+        "portrait"
+      ],
+      "description": ""
+    },
+    {
+      "id": "SYNTH0018",
+      "originalUrl": "https://photos.fixture.test/fixtures/SYNTH0018.jpg",
+      "thumbnailUrl": "/thumbnails/SYNTH0018.jpg",
+      "thumbHash": "a3a5010c0a7307777787877878878c8f380888",
+      "width": 2160,
+      "height": 3840,
+      "aspectRatio": 0.5625,
+      "s3Key": "fixtures/SYNTH0018.jpg",
+      "lastModified": "2026-01-02T17:00:00.000Z",
+      "size": 4338027,
+      "etag": "\"synthetic-synth0018\"",
+      "exif": {
+        "DateTimeOriginal": "2026-04-23T13:11:00.000Z",
+        "ImageWidth": 2160,
+        "ImageHeight": 3840,
+        "Make": "Polaris",
+        "Model": "P1",
+        "LensMake": "Polaris",
+        "LensModel": "Orbit 24-70mm F4",
+        "ISO": 3200,
+        "FNumber": 4,
+        "ExposureTime": "1/60",
+        "FocalLength": "24.0 mm"
+      },
+      "toneAnalysis": {
+        "toneType": "high-contrast",
+        "brightness": 49,
+        "contrast": 47,
+        "shadowRatio": 0.34,
+        "highlightRatio": 0.28
+      },
+      "location": null,
+      "title": "SYNTH0018",
+      "dateTaken": "2026-04-23T13:11:00.000Z",
+      "tags": [
+        "macro"
+      ],
+      "description": ""
+    }
+  ],
+  "indexes": {
+    "cameras": [
+      {
+        "make": "Lumina",
+        "model": "LX-7",
+        "displayName": "Lumina LX-7"
+      },
+      {
+        "make": "Polaris",
+        "model": "P1",
+        "displayName": "Polaris P1"
+      }
+    ],
+    "lenses": [
+      {
+        "make": "Lumina",
+        "model": "Vista 35mm F1.8",
+        "displayName": "Lumina Vista 35mm F1.8"
+      },
+      {
+        "make": "Polaris",
+        "model": "Orbit 24-70mm F4",
+        "displayName": "Polaris Orbit 24-70mm F4"
+      }
+    ]
+  }
+}

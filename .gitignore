@@ -1,4 +1,56 @@
+node_modules
+.pnpm-store
+.DS_Store
+dist
+dist-ssr
+*.local
+*.tsbuildinfo
+playwright-report
+playwright-report-prod
+test-results
+coverage
+artifacts
+
+# 配置文件
+.env
+.env.*
+!.env.template
+
+# Source photos are tracked in this repo so they can be pushed (even from mobile).
+# /photos/
+
+# Leftover Jekyll output from the previous photo-stream setup (root-owned).
 _site/
-photos/large/
-photos/thumbnail/
-photos/tint/
+
+# 构建产物
+apps/web/public/thumbnails
+apps/web/public/photos
+apps/web/public/originals
+apps/web/assets-git
+apps/web/assets-git.backup-*
+generated
+
+# 部署相关
+.vercel
+.turbo
+**/.turbo
+
+# Generated TypeScript side-output in webgl-viewer
+packages/webgl-viewer/bump.config.js
+packages/webgl-viewer/vite.config.js
+packages/webgl-viewer/src/DebugInfo.js
+packages/webgl-viewer/src/ImageViewerEngineBase.js
+packages/webgl-viewer/src/WebGLImageViewer.js
+packages/webgl-viewer/src/WebGLImageViewerEngine.js
+packages/webgl-viewer/src/constants.js
+packages/webgl-viewer/src/enum.js
+packages/webgl-viewer/src/index.js
+packages/webgl-viewer/src/interface.js
+packages/webgl-viewer/src/shaders.js
+
+# IDE
+.claude
+.cursor
+.specstory
+.vscode
+.omx/

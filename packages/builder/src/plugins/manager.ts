@@ -1,0 +1,123 @@
+import type { EmitPluginEventFn } from "../core/contracts/execution-context.js";
+import type { PluginRunState } from "../core/contracts/plugin-ref.js";
+import type { BuilderServices } from "../core/contracts/services.js";
+import { logger } from "../logger/index.js";
+import { loadPlugins } from "./loader.js";
+import type {
+  BuilderPluginConfigEntry,
+  BuilderPluginEvent,
+  BuilderPluginEventPayloads,
+  BuilderPluginHookContext,
+} from "./types.js";
+
+export type { PluginRunState } from "../core/contracts/plugin-ref.js";
+
+export class PluginManager {
+  private readonly entries: BuilderPluginConfigEntry[];
+  private readonly baseDir: string;
+  private plugins: Awaited<ReturnType<typeof loadPlugins>> = [];
+  private loadPromise: Promise<void> | null = null;
+
+  constructor(
+    entries: BuilderPluginConfigEntry[] = [],
+    options: { baseDir?: string } = {},
+  ) {
+    this.entries = entries;
+    this.baseDir = options.baseDir ?? process.cwd();
+  }
+
+  hasPlugins(): boolean {
+    return this.entries.length > 0;
+  }
+
+  createRunState(): PluginRunState {
+    return new Map();
+  }
+
+  async ensureLoaded(services: BuilderServices): Promise<void> {
+    if (this.plugins.length > 0 || this.loadPromise) {
+      await this.loadPromise;
+      return;
+    }
+
+    if (this.entries.length === 0) {
+      this.plugins = [];
+      return;
+    }
+
+    this.loadPromise = (async () => {
+      this.plugins = await loadPlugins(this.entries, {
+        baseDir: this.baseDir,
+      });
+
+      for (const plugin of this.plugins) {
+        const initHook = plugin.hooks.onInit;
+        if (!initHook) continue;
+
+        try {
+          await initHook({
+            services,
+            config: services.config,
+            logger,
+            pluginOptions: plugin.pluginOptions,
+          });
+        } catch (error) {
+          logger.main.error(
+            `[Builder Plugin] Failed to initialize plugin "${plugin.name}"`,
+            error,
+          );
+          throw error;
+        }
+      }
+    })();
+
+    await this.loadPromise;
+  }
+
+  async emit<TEvent extends BuilderPluginEvent>(
+    services: BuilderServices,
+    emitPluginEvent: EmitPluginEventFn,
+    runState: PluginRunState,
+    event: TEvent,
+    payload: BuilderPluginEventPayloads[TEvent],
+  ): Promise<void> {
+    if (this.plugins.length === 0) return;
+
+    for (const plugin of this.plugins) {
+      const hook = plugin.hooks[event] as
+        | ((context: BuilderPluginHookContext<TEvent>) => void | Promise<void>)
+        | undefined;
+      if (!hook) continue;
+
+      const sharedKey = plugin.name;
+      let shared = runState.get(sharedKey);
+      if (!shared) {
+        shared = new Map();
+        runState.set(sharedKey, shared);
+      }
+
+      const context: BuilderPluginHookContext<TEvent> = {
+        services,
+        emitPluginEvent,
+        config: services.config,
+        logger,
+        options: payload.options,
+        pluginName: plugin.name,
+        pluginOptions: plugin.pluginOptions,
+        runShared: shared,
+        event,
+        payload,
+      };
+
+      try {
+        await hook(context);
+      } catch (error) {
+        logger.main.error(
+          `[Builder Plugin] Plugin "${plugin.name}" threw an error in the ${event} hook`,
+          error,
+        );
+        throw error;
+      }
+    }
+  }
+}

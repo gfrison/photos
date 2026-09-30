@@ -1,6 +1,0 @@
-url: "https://gfrison.com"
-baseurl: ""
-
-# Photo Stream image settings (adjust as needed)
-resize_to_limit: [2048, 2048]
-thumbnail_size: [640, 640]

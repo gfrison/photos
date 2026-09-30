@@ -1,0 +1,52 @@
+import { useAtom } from "jotai";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+
+import { responsiveGalleryColumnsAtom } from "~/atoms/app";
+import { Slider } from "~/components/ui/slider";
+import { useMobile } from "~/hooks/useMobile";
+
+export const ColumnsPanel = () => {
+  const { t } = useTranslation();
+  const [columns, setColumns] = useAtom(responsiveGalleryColumnsAtom);
+  const isMobile = useMobile();
+  // Local preview state to avoid reflow while dragging
+  const [previewColumns, setPreviewColumns] = useState<number | "auto">(
+    columns,
+  );
+  // Ref to always have the latest slider value and avoid stale closures
+  const latestColumnsRef = useRef<number | "auto">(columns);
+
+  // atomWithStorage hydrates after the component mounts. Keep the local
+  // drag-preview in sync so the control reflects the restored preference.
+  useEffect(() => {
+    latestColumnsRef.current = columns;
+    setPreviewColumns(columns);
+  }, [columns]);
+
+  const handleChange = (val: number | "auto") => {
+    latestColumnsRef.current = val;
+    setPreviewColumns(val);
+  };
+
+  const handlePointUp = () => {
+    setColumns(latestColumnsRef.current);
+  };
+  // 根据设备类型提供不同的列数范围
+  const columnRange = isMobile
+    ? { min: 3, max: 5 } // 移动端适合的列数范围
+    : { min: 3, max: 8 }; // 桌面端适合的列数范围
+
+  return (
+    <div className="w-full">
+      <Slider
+        value={previewColumns}
+        onChange={handleChange}
+        onPointUp={handlePointUp}
+        min={columnRange.min}
+        max={columnRange.max}
+        autoLabel={t("action.auto")}
+      />
+    </div>
+  );
+};

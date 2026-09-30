@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noImplicitAny": true,
+    "noEmit": true,
+    "jsx": "preserve",
+    "paths": {
+      "~/*": ["./src/*"],
+      "@pkg": ["./package.json"],
+      "@config": ["../../site.config.ts"],
+      "@env": ["../../env.ts"],
+      "@locales/*": ["../../locales/*"]
+    }
+  },
+  "include": ["./src/**/*", "./scripts/**/*"],
+  "exclude": [
+    "./src/**/*.test.ts",
+    "./src/**/*.test.tsx",
+    "./src/**/__tests__/**"
+  ]
+}

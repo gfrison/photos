@@ -1,0 +1,107 @@
+import { cleanup, render, screen } from "@testing-library/react";
+import type { ReactNode } from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import { MiniMap } from "../MiniMap";
+
+const capabilities = vi.hoisted(() => ({ webgl2: true }));
+
+vi.mock("~/lib/feature", () => ({
+  get canUseWebGL2() {
+    return capabilities.webgl2;
+  },
+}));
+
+vi.mock("~/navigation/hooks", () => ({
+  useAppNavigation: () => ({ showMap: vi.fn() }),
+}));
+
+vi.mock("~/lib/map/maplibre", () => ({ maplibre: {} }));
+
+vi.mock("react-map-gl/maplibre", async () => {
+  const React = await import("react");
+
+  const MockMap = ({ onLoad }: { onLoad?: () => void }) => {
+    React.useEffect(() => {
+      onLoad?.();
+    }, [onLoad]);
+
+    return <div data-testid="mini-map-canvas" />;
+  };
+
+  return { default: MockMap };
+});
+
+vi.mock("react-router", () => ({
+  Link: ({ to, children, ...props }: { to: string; children: ReactNode }) => (
+    <a href={to} {...props}>
+      {children}
+    </a>
+  ),
+}));
+
+vi.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}));
+
+vi.mock("~/lib/map/style", () => ({
+  getMapStyle: () => ({}),
+}));
+
+describe("MiniMap", () => {
+  beforeEach(() => {
+    capabilities.webgl2 = true;
+    vi.clearAllMocks();
+    vi.stubGlobal(
+      "URL",
+      Object.assign(globalThis.URL ?? {}, {
+        createObjectURL: vi.fn(() => "blob:mock-url"),
+      }),
+    );
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("renders when one coordinate is zero but the GPS pair is still valid", () => {
+    render(<MiniMap latitude={0} longitude={120.5} photoId="photo-1" />);
+
+    expect(screen.getByTestId("mini-map-canvas")).not.toBeNull();
+    expect(screen.getByRole("link").getAttribute("href")).toBe(
+      "/explore?photoId=photo-1",
+    );
+  });
+
+  it("encodes photo ids before placing them in the explore query string", () => {
+    render(<MiniMap latitude={30} longitude={120.5} photoId="a&b#c" />);
+
+    const href = screen.getByRole("link").getAttribute("href");
+
+    expect(href).toBe("/explore?photoId=a%26b%23c");
+    expect(
+      new URL(href!, "https://example.test").searchParams.get("photoId"),
+    ).toBe("a&b#c");
+  });
+
+  it("keeps the location link usable without initializing a map when WebGL2 is unavailable", () => {
+    capabilities.webgl2 = false;
+    const { rerender, unmount } = render(
+      <MiniMap latitude={30} longitude={120.5} photoId="photo-1" />,
+    );
+
+    expect(screen.queryByTestId("mini-map-canvas")).toBeNull();
+    expect(screen.queryByText("minimap.loading")).toBeNull();
+    expect(screen.getByText("30.0000, 120.5000")).not.toBeNull();
+    expect(screen.getByRole("link").getAttribute("href")).toBe(
+      "/explore?photoId=photo-1",
+    );
+
+    rerender(<MiniMap latitude={31} longitude={121} photoId="photo-2" />);
+    expect(screen.queryByTestId("mini-map-canvas")).toBeNull();
+    expect(screen.getByText("31.0000, 121.0000")).not.toBeNull();
+    unmount();
+  });
+});

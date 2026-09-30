@@ -1,0 +1,194 @@
+import type { PhotoManifestItem as PhotoManifest } from "@afilmory/schema";
+import { createManifest } from "@afilmory/schema";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import type { AfilmoryBrowserRuntime } from "~/runtime/browser-runtime";
+
+import {
+  WEB_DELIVERY_MANIFEST_SCHEMA,
+  WEB_DELIVERY_MANIFEST_VERSION,
+} from "../delivery-manifest";
+import { loadManifestRuntime } from "../manifest-runtime";
+
+const originalFetch = globalThis.fetch;
+
+function createPhoto(id: string): PhotoManifest {
+  return {
+    id,
+    title: id,
+    description: "",
+    dateTaken: "2024-01-01T00:00:00.000Z",
+    tags: [],
+    originalUrl: `https://example.com/${id}.jpg`,
+    thumbnailUrl: `https://example.com/${id}-thumb.jpg`,
+    thumbHash: null,
+    width: 100,
+    height: 100,
+    aspectRatio: 1,
+    s3Key: `${id}.jpg`,
+    lastModified: "2024-01-01T00:00:00.000Z",
+    size: 1,
+    exif: null,
+    toneAnalysis: null,
+    location: null,
+  };
+}
+
+describe("loadManifestRuntime", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    delete (
+      globalThis as typeof globalThis & {
+        __AFILMORY__?: AfilmoryBrowserRuntime;
+      }
+    ).__AFILMORY__;
+    globalThis.fetch = originalFetch;
+  });
+
+  it("returns the injected inline manifest without fetching", async () => {
+    (
+      globalThis as typeof globalThis & {
+        __AFILMORY__?: AfilmoryBrowserRuntime;
+      }
+    ).__AFILMORY__ = {
+      version: 1,
+      manifest: {
+        mode: "inline",
+        data: createManifest({ photos: [createPhoto("1")] }),
+      },
+    };
+    const fetchSpy = vi.fn();
+    globalThis.fetch = fetchSpy as typeof globalThis.fetch;
+
+    const manifest = await loadManifestRuntime();
+
+    expect(manifest.photos).toHaveLength(1);
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("uses the prestarted manifest promise when available", async () => {
+    (
+      globalThis as typeof globalThis & {
+        __AFILMORY__?: AfilmoryBrowserRuntime;
+      }
+    ).__AFILMORY__ = {
+      version: 1,
+      manifest: {
+        mode: "external",
+        url: "/assets/photos-manifest.json",
+        promise: Promise.resolve(
+          createManifest({ photos: [createPhoto("2")] }),
+        ),
+      },
+    };
+
+    const manifest = await loadManifestRuntime();
+
+    expect(manifest.photos[0]?.id).toBe("2");
+  });
+
+  it("loads Web Delivery Manifest v3 while exposing its shard descriptor", async () => {
+    const galleryManifest = createManifest({ photos: [createPhoto("v3")] });
+    const runtime: AfilmoryBrowserRuntime = {
+      version: 1,
+      manifest: {
+        mode: "external",
+        url: "/assets/gallery-index.deadbeef.json",
+        promise: Promise.resolve({
+          schema: WEB_DELIVERY_MANIFEST_SCHEMA,
+          version: WEB_DELIVERY_MANIFEST_VERSION,
+          kind: "gallery-index",
+          manifest: galleryManifest,
+          delivery: {
+            detailShards: [
+              {
+                url: "/assets/photo-details.0.deadbeef.json",
+                photoIds: ["v3"],
+              },
+            ],
+            mapUrl: "/assets/map-details.deadbeef.json",
+          },
+        }),
+      },
+    };
+    (
+      globalThis as typeof globalThis & {
+        __AFILMORY__?: AfilmoryBrowserRuntime;
+      }
+    ).__AFILMORY__ = runtime;
+
+    const manifest = await loadManifestRuntime();
+
+    expect(manifest.photos[0]?.id).toBe("v3");
+    expect(runtime.manifest?.delivery).toEqual({
+      detailShards: [
+        {
+          url: "/assets/photo-details.0.deadbeef.json",
+          photoIds: ["v3"],
+        },
+      ],
+      mapUrl: "/assets/map-details.deadbeef.json",
+    });
+  });
+
+  it("fetches the external manifest when only a URL is injected", async () => {
+    (
+      globalThis as typeof globalThis & {
+        __AFILMORY__?: AfilmoryBrowserRuntime;
+      }
+    ).__AFILMORY__ = {
+      version: 1,
+      manifest: {
+        mode: "external",
+        url: "/assets/photos-manifest.json",
+      },
+    };
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => createManifest({ photos: [createPhoto("3")] }),
+    });
+    globalThis.fetch = fetchSpy as typeof globalThis.fetch;
+
+    const manifest = await loadManifestRuntime();
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      "/assets/photos-manifest.json",
+      expect.any(Object),
+    );
+    expect(manifest.photos[0]?.id).toBe("3");
+  });
+
+  it("clears the cached promise after a failed fetch so retries can succeed", async () => {
+    (
+      globalThis as typeof globalThis & {
+        __AFILMORY__?: AfilmoryBrowserRuntime;
+      }
+    ).__AFILMORY__ = {
+      version: 1,
+      manifest: {
+        mode: "external",
+        url: "/assets/photos-manifest.json",
+      },
+    };
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+        statusText: "Unavailable",
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => createManifest({ photos: [createPhoto("4")] }),
+      });
+    globalThis.fetch = fetchSpy as typeof globalThis.fetch;
+
+    await expect(loadManifestRuntime()).rejects.toThrow(
+      "Manifest request failed: 503 Unavailable",
+    );
+    const manifest = await loadManifestRuntime();
+
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    expect(manifest.photos[0]?.id).toBe("4");
+  });
+});

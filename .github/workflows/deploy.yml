@@ -1,8 +1,9 @@
-name: Build and Deploy Photo Stream
+name: Build and Deploy Afilmory
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "afilmory"]
+  workflow_dispatch:
 
 # Allow GITHUB_TOKEN to deploy to GitHub Pages
 permissions:
@@ -17,32 +18,50 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      PHOTO_STORAGE_PROVIDER: local
+      LOCAL_PHOTOS_PATH: photos
+      LOCAL_PHOTOS_BASE_URL: /originals
+      # Served as a GitHub Pages project page under the org page's custom domain.
+      BASE_PATH: /photos
+      SITE_URL: https://gfrison.com/photos
+      SITE_NAME: "Giancarlo Frison — Photos"
+      SITE_TITLE: "Giancarlo Frison — Photos"
+      SITE_DESCRIPTION: "Photo stream by Giancarlo Frison."
+      AUTHOR_NAME: "Giancarlo Frison"
+      AUTHOR_URL: "https://gfrison.com"
+      SOCIAL_GITHUB: gfrison
+      SOCIAL_TWITTER: gfrison
+      SOCIAL_RSS: "true"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
       - name: Setup GitHub Pages
-        id: pages
         uses: actions/configure-pages@v5
 
-      - name: Build Photo Stream with Docker image
-        run: |
-          mkdir -p _site
-          docker run --rm \
-            --env-file .env \
-            -v "$PWD/photos:/photo-stream/photos" \
-            -v "$PWD/_site:/photo-stream/_site" \
-            --entrypoint bundle \
-            waschinski/photo-stream:latest \
-            exec jekyll build --baseurl /photos
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - name: Fix artifact permissions
-        run: sudo chown -R "$USER" _site
+      - name: Build static gallery
+        run: pnpm build
+
+      - name: Add SPA fallback for client-only routes
+        run: cp apps/web/dist/index.html apps/web/dist/404.html
 
       - name: Upload Build Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './_site'
+          path: "./apps/web/dist"
 
   deploy:
     environment:

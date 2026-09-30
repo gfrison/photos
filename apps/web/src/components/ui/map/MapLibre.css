@@ -1,0 +1,91 @@
+@layer components {
+  .afilmory-map-attribution {
+    position: absolute;
+    right: calc(env(safe-area-inset-right) + 1rem);
+    bottom: calc(env(safe-area-inset-bottom) + 1rem);
+    z-index: 40;
+    display: flex;
+    min-width: 44px;
+    min-height: 44px;
+    max-width: calc(100vw - 2rem);
+    justify-content: flex-end;
+    pointer-events: none;
+  }
+
+  .afilmory-map-attribution-panel {
+    display: flex;
+    min-height: 44px;
+    width: max-content;
+    max-width: min(34rem, calc(100vw - 2rem));
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 0.35rem;
+    padding: 0 3rem 0 0.75rem;
+    overflow: hidden;
+    color: var(--af-text-secondary);
+    font-size: 11px;
+    line-height: 1.35;
+    white-space: nowrap;
+    border-radius: var(--af-radius-control);
+    pointer-events: auto;
+  }
+
+  .afilmory-map-attribution-panel > * {
+    flex: 0 0 auto;
+  }
+
+  .afilmory-map-attribution-panel a {
+    color: var(--af-text);
+    text-decoration: none;
+  }
+
+  .afilmory-map-attribution-panel a:hover {
+    color: var(--af-text);
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    text-underline-offset: 2px;
+  }
+
+  .afilmory-map-attribution-button {
+    --af-focus-offset: -3px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    color: var(--af-text-secondary);
+    background: transparent;
+    border: 0;
+    border-radius: var(--af-radius-control);
+    pointer-events: auto;
+    transition:
+      background-color var(--af-duration-fast),
+      color var(--af-duration-fast);
+  }
+
+  .afilmory-map-attribution-button span {
+    display: flex;
+    width: 22px;
+    height: 22px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .afilmory-map-attribution[data-state="open"]
+    .afilmory-map-attribution-button {
+    color: var(--af-text);
+    background-color: var(--af-surface-hover);
+  }
+
+  .afilmory-map-attribution-button:hover {
+    color: var(--af-text);
+    background-color: var(--af-surface-hover);
+  }
+}

@@ -1,0 +1,221 @@
+import { clsxm, Spring } from "@afilmory/ui";
+import { m } from "motion/react";
+import type { FC } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+
+import { ThumbnailImage } from "~/components/ui/ThumbnailImage";
+import { useMobile } from "~/hooks/useMobile";
+import { nextFrame } from "~/lib/dom";
+import { getPhotoAccessibleLabel } from "~/lib/photo-accessibility";
+import type { PhotoManifest } from "~/types/photo";
+
+import {
+  thumbnailGapSize,
+  thumbnailPaddingSize,
+  thumbnailSize,
+} from "./gallery-thumbnail-metrics";
+
+export const GalleryThumbnail: FC<{
+  currentIndex: number;
+  photos: readonly PhotoManifest[];
+  onIndexChange: (index: number) => void;
+  visible?: boolean;
+}> = ({ currentIndex, photos, onIndexChange, visible = true }) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { t, i18n } = useTranslation();
+
+  const isMobile = useMobile();
+
+  const [scrollContainerWidth, setScrollContainerWidth] = useState(0);
+
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      setScrollContainerWidth(scrollContainer.clientWidth);
+      const observer = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          setScrollContainerWidth((prev) =>
+            prev === entry.contentRect.width ? prev : entry.contentRect.width,
+          );
+        }
+      });
+      observer.observe(scrollContainer);
+      return () => {
+        observer.disconnect();
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+
+    if (scrollContainer) {
+      const containerWidth = scrollContainerWidth;
+      const thumbnailLeft =
+        currentIndex *
+          (isMobile ? thumbnailSize.mobile : thumbnailSize.desktop) +
+        (isMobile ? thumbnailGapSize.mobile : thumbnailGapSize.desktop) *
+          currentIndex;
+      const thumbnailWidth = isMobile
+        ? thumbnailSize.mobile
+        : thumbnailSize.desktop;
+
+      const scrollLeft =
+        thumbnailLeft - containerWidth / 2 + thumbnailWidth / 2;
+      nextFrame(() => {
+        scrollContainer.scrollTo({
+          left: scrollLeft,
+          behavior: "auto",
+        });
+      });
+    }
+  }, [currentIndex, isMobile, scrollContainerWidth]);
+
+  // 处理鼠标滚轮事件，映射为横向滚动
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      // 阻止默认的垂直滚动
+      e.preventDefault();
+
+      // 优先使用触控板的横向滚动 (deltaX)
+      // 如果没有横向滚动，则将垂直滚动 (deltaY) 转换为横向滚动
+      const scrollAmount =
+        Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      scrollContainer.scrollLeft += scrollAmount;
+    };
+
+    scrollContainer.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      scrollContainer.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
+
+  const thumbnailWidth = isMobile
+    ? thumbnailSize.mobile
+    : thumbnailSize.desktop;
+  const gapSize = isMobile ? thumbnailGapSize.mobile : thumbnailGapSize.desktop;
+  const itemWidth = thumbnailWidth + gapSize;
+  const visibleThumbnailCount =
+    scrollContainerWidth > 0 ? Math.ceil(scrollContainerWidth / itemWidth) : 8;
+  const renderRange = Math.max(8, Math.ceil(visibleThumbnailCount / 2) + 6);
+  const startIndex = Math.max(0, currentIndex - renderRange);
+  const endIndex = Math.min(photos.length - 1, currentIndex + renderRange);
+
+  const leftPlaceholderWidth = startIndex > 0 ? startIndex * itemWidth : 0;
+  const rightPlaceholderWidth =
+    endIndex < photos.length - 1
+      ? (photos.length - 1 - endIndex) * itemWidth
+      : 0;
+
+  return (
+    <m.div
+      className="af-glass pb-safe z-10 shrink-0 border-x-0 border-t border-b-0"
+      initial={{ y: 100, opacity: 0 }}
+      animate={{
+        y: visible ? 0 : 48,
+        opacity: visible ? 1 : 0,
+      }}
+      exit={{ y: 100, opacity: 0 }}
+      transition={Spring.presets.smooth}
+      style={{
+        pointerEvents: visible ? "auto" : "none",
+      }}
+    >
+      <div
+        ref={scrollContainerRef}
+        className="relative z-10 flex scrollbar-none overflow-x-auto"
+        style={{
+          gap: isMobile ? thumbnailGapSize.mobile : thumbnailGapSize.desktop,
+          padding: isMobile
+            ? thumbnailPaddingSize.mobile
+            : thumbnailPaddingSize.desktop,
+        }}
+      >
+        {/* Left placeholder */}
+        {leftPlaceholderWidth > 0 && (
+          <div
+            style={{
+              width: leftPlaceholderWidth,
+              flexShrink: 0,
+            }}
+          />
+        )}
+
+        {/* Only render thumbnails within visible range */}
+        {photos.slice(startIndex, endIndex + 1).map((photo, sliceIndex) => {
+          const index = startIndex + sliceIndex;
+          const photoLabel = getPhotoAccessibleLabel(photo, t, i18n.language);
+          return (
+            <button
+              type="button"
+              key={photo.id}
+              className={clsxm(
+                // 不用 content-visibility:auto：条目已按 currentIndex 窗口化渲染，
+                // 该属性只会让离屏缩略图被丢弃渲染、横向滚回时重新解码重绘（观感即
+                // 「缓存的小图又在加载」）。
+                "relative shrink-0 overflow-hidden rounded-lg border-2 transition-[border-color,box-shadow,opacity] duration-200",
+                index === currentIndex
+                  ? "border-accent opacity-100 ring-2 ring-accent/30"
+                  : "border-white/20 opacity-80 hover:border-white/60 hover:opacity-100",
+              )}
+              style={
+                isMobile
+                  ? {
+                      width: thumbnailSize.mobile,
+                      height: thumbnailSize.mobile,
+                    }
+                  : {
+                      width: thumbnailSize.desktop,
+                      height: thumbnailSize.desktop,
+                    }
+              }
+              aria-current={index === currentIndex ? "true" : undefined}
+              aria-label={t("photo.thumbnail.open", {
+                title: photoLabel,
+              })}
+              title={photoLabel}
+              onClick={() => onIndexChange(index)}
+            >
+              <ThumbnailImage
+                photoId={photo.id}
+                src={photo.thumbnailUrl}
+                alt={photoLabel}
+                width={photo.width}
+                height={photo.height}
+                thumbHash={photo.thumbHash}
+                loading={index === currentIndex ? "eager" : "lazy"}
+                fetchPriority={index === currentIndex ? "high" : "low"}
+                decoding="async"
+                draggable={false}
+                containerClassName="absolute inset-0"
+                imageClassName="h-full w-full object-cover"
+                placeholderClassName="size-fill"
+              />
+              {index === currentIndex && (
+                <span
+                  aria-hidden="true"
+                  className="absolute right-1 bottom-1 size-1.5 rounded-full bg-white shadow-sm shadow-black/60"
+                />
+              )}
+            </button>
+          );
+        })}
+
+        {/* Right placeholder */}
+        {rightPlaceholderWidth > 0 && (
+          <div
+            style={{
+              width: rightPlaceholderWidth,
+              flexShrink: 0,
+            }}
+          />
+        )}
+      </div>
+    </m.div>
+  );
+};

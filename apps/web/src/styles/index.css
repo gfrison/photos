@@ -1,0 +1,7 @@
+/* Order: framework → tokens → document → recipes → focus.
+   Feature CSS is imported by the feature that owns it. */
+@import "./tailwind.css";
+@import "./tokens.css";
+@import "./base.css";
+@import "./surfaces.css";
+@import "./accessibility.css";

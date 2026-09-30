@@ -1,0 +1,200 @@
+// Tremor Button [v0.2.0]
+
+/* eslint-disable react-refresh/only-export-components */
+
+import { Slot } from "@radix-ui/react-slot";
+import * as React from "react";
+import type { VariantProps } from "tailwind-variants";
+import { tv } from "tailwind-variants";
+
+import { clsxm, focusRing } from "../utils/cn";
+
+const buttonVariants = tv({
+  base: [
+    "relative inline-flex items-center justify-center whitespace-nowrap rounded-control text-center font-medium",
+    "active:scale-95",
+    "disabled:pointer-events-none",
+    focusRing,
+  ],
+  variants: {
+    variant: {
+      surface: "af-control",
+      primary: [
+        "border border-transparent bg-accent text-accent-content hover:bg-accent/90",
+        "transition-[background-color,color,opacity,scale] duration-(--af-duration-fast) ease-(--af-ease)",
+        "disabled:opacity-45 aria-disabled:opacity-45",
+      ],
+      secondary: "af-control",
+      light: [
+        "af-control shadow-none",
+        "[--af-control-bg:var(--af-surface-active)]",
+      ],
+      ghost: [
+        "af-control shadow-none",
+        "[--af-control-bg:transparent] [--af-control-border:transparent]",
+      ],
+      destructive: [
+        "border border-transparent bg-red-600 text-white hover:bg-red-700",
+        "transition-[background-color,color,opacity,scale] duration-(--af-duration-fast) ease-(--af-ease)",
+        "disabled:opacity-45 aria-disabled:opacity-45",
+      ],
+    },
+    size: {
+      xs: "h-6 px-2 text-xs",
+      sm: "h-8 px-3 text-sm",
+      md: "h-10 px-4 text-sm",
+      lg: "h-11 px-8 text-base",
+      xl: "h-12 px-8 text-base",
+    },
+    flat: {
+      true: "shadow-none",
+      false: "shadow-(--af-shadow-sm)",
+    },
+  },
+  defaultVariants: {
+    variant: "primary",
+    size: "sm",
+    flat: false,
+  },
+});
+
+interface ButtonProps
+  extends
+    React.ComponentPropsWithoutRef<"button">,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+  isLoading?: boolean;
+  loadingText?: string;
+}
+
+const Button = ({
+  ref: forwardedRef,
+  asChild,
+  isLoading = false,
+  loadingText,
+  className,
+  disabled,
+  variant,
+  size,
+  flat,
+  children,
+  type = "button",
+  onClick,
+  onClickCapture,
+  ...props
+}: ButtonProps & {
+  ref?: React.Ref<HTMLButtonElement>;
+}) => {
+  const content = (
+    <>
+      {isLoading ? (
+        <span className="pointer-events-none inline-flex items-center justify-center gap-1.5">
+          <i
+            className={clsxm(
+              "shrink-0 animate-spin i-mingcute-loading-3-line",
+              size === "xs" || size === "sm" ? "size-3" : "size-4",
+            )}
+            aria-hidden="true"
+          />
+          <span className="sr-only">{loadingText ?? "Loading"}</span>
+          <span className="inline-block">
+            {loadingText ??
+              (React.isValidElement<{ children?: React.ReactNode }>(children)
+                ? children.props.children
+                : children)}
+          </span>
+        </span>
+      ) : (
+        children
+      )}
+    </>
+  );
+
+  const resolvedClassName = clsxm(
+    buttonVariants({ variant, size, flat }),
+    className,
+  );
+  const isDisabled = Boolean(disabled || isLoading);
+
+  if (asChild) {
+    type SlottedElementProps = {
+      children?: React.ReactNode;
+      onClick?: React.MouseEventHandler<HTMLElement>;
+      onClickCapture?: React.MouseEventHandler<HTMLElement>;
+      "aria-disabled"?: boolean;
+      "aria-busy"?: boolean;
+      "data-disabled"?: string;
+    };
+
+    if (!React.isValidElement<SlottedElementProps>(children)) {
+      throw new Error("Button with asChild requires a single React element");
+    }
+
+    const blockActivation: React.MouseEventHandler<HTMLElement> = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    const childOnClick = children.props.onClick;
+    const childOnClickCapture = children.props.onClickCapture;
+    const mergedOnClick: React.MouseEventHandler<HTMLElement> = isDisabled
+      ? blockActivation
+      : (event) => {
+          childOnClick?.(event);
+          if (!event.defaultPrevented) {
+            onClick?.(event as React.MouseEvent<HTMLButtonElement>);
+          }
+        };
+    const mergedOnClickCapture: React.MouseEventHandler<HTMLElement> =
+      isDisabled
+        ? blockActivation
+        : (event) => {
+            childOnClickCapture?.(event);
+            if (!event.defaultPrevented) {
+              onClickCapture?.(event as React.MouseEvent<HTMLButtonElement>);
+            }
+          };
+
+    const slotChild = React.cloneElement(
+      children,
+      {
+        "aria-busy": isLoading || children.props["aria-busy"],
+        "aria-disabled": isDisabled || children.props["aria-disabled"],
+        "data-disabled": isDisabled ? "" : children.props["data-disabled"],
+        onClick: mergedOnClick,
+        onClickCapture: mergedOnClickCapture,
+      },
+      isLoading ? content : children.props.children,
+    );
+
+    return (
+      <Slot
+        ref={forwardedRef}
+        className={resolvedClassName}
+        data-tremor-id="tremor-raw"
+        {...props}
+      >
+        {slotChild}
+      </Slot>
+    );
+  }
+
+  return (
+    <button
+      ref={forwardedRef}
+      className={resolvedClassName}
+      aria-busy={isLoading || undefined}
+      disabled={isDisabled}
+      data-tremor-id="tremor-raw"
+      type={type}
+      onClick={onClick}
+      onClickCapture={onClickCapture}
+      {...props}
+    >
+      {content}
+    </button>
+  );
+};
+
+Button.displayName = "Button";
+
+export { Button, type ButtonProps, buttonVariants };

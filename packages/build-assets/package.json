@@ -1,0 +1,22 @@
+{
+  "name": "@afilmory/build-assets",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "pnpm --dir ../.. exec vitest run --project build-assets",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@afilmory/schema": "workspace:*",
+    "opentype.js": "2.0.0",
+    "sharp": "0.35.4"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

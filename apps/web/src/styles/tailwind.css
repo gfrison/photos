@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@plugin '@tailwindcss/typography';
+@plugin '@egoist/tailwindcss-icons';
+@plugin 'daisyui' {
+  /* Radix and the app own body scrolling. DaisyUI's root lock targets its
+     own modal components and overrides the gallery's fixed-root contract. */
+  exclude: properties, radialprogress, rootscrolllock;
+}
+@plugin 'tailwind-scrollbar';
+@plugin 'tailwindcss-animate';
+@import "tailwindcss-safe-area";
+
+/* Workspace components are consumed from source, including production builds. */
+@source "../../node_modules/@afilmory/ui";
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));

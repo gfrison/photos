@@ -1,0 +1,195 @@
+import { Spring } from "@afilmory/ui";
+import type { MotionValue } from "motion/react";
+import { m } from "motion/react";
+import type { RefObject } from "react";
+import { Fragment } from "react";
+import { useTranslation } from "react-i18next";
+import type { Swiper as SwiperType } from "swiper";
+import { Navigation, Virtual } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+
+import { getPhotoAccessibleLabel } from "~/lib/photo-accessibility";
+import type { PhotoManifest } from "~/types/photo";
+
+import type { LoadingIndicatorRef } from "./LoadingIndicator";
+import { LoadingIndicator } from "./LoadingIndicator";
+import { ProgressiveImage } from "./ProgressiveImage";
+
+const viewerNavButtonClassName =
+  "af-glass af-control absolute top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center rounded-full opacity-0 group-hover:opacity-100 focus-visible:opacity-100";
+
+interface PhotoViewerMediaCarouselProps {
+  photos: readonly PhotoManifest[];
+  currentPhoto: PhotoManifest;
+  currentIndex: number;
+  isOpen: boolean;
+  isMobile: boolean;
+  isViewerContentVisible: boolean;
+  isEntryAnimating: boolean;
+  canGoPrevious: boolean;
+  canGoNext: boolean;
+  loadingIndicatorRef: RefObject<LoadingIndicatorRef | null>;
+  /** 手势目标（媒体区根元素），下滑关闭在此以 capture 监听接管纵向拖拽 */
+  ref?: RefObject<HTMLDivElement | null>;
+  /** 下滑关闭跟手：图片包裹层的位移/缩放（未拖拽时为恒等；contentX 用于中断入场的水平接管） */
+  contentX: MotionValue<number>;
+  contentY: MotionValue<number>;
+  contentScale: MotionValue<number>;
+  onSwiperReady: (swiper: SwiperType) => void;
+  onSlideChange: (swiper: SwiperType) => void;
+  onPrevious: () => void;
+  onNext: () => void;
+  onZoomChange: (isZoomed: boolean) => void;
+  onBlobSrcChange: (blobSrc: string | null) => void;
+}
+
+export const PhotoViewerMediaCarousel = ({
+  photos,
+  currentPhoto,
+  currentIndex,
+  isOpen,
+  isMobile,
+  isViewerContentVisible,
+  isEntryAnimating,
+  canGoPrevious,
+  canGoNext,
+  loadingIndicatorRef,
+  ref,
+  contentX,
+  contentY,
+  contentScale,
+  onSwiperReady,
+  onSlideChange,
+  onPrevious,
+  onNext,
+  onZoomChange,
+  onBlobSrcChange,
+}: PhotoViewerMediaCarouselProps) => {
+  const { t, i18n } = useTranslation();
+
+  return (
+    <m.div
+      ref={ref}
+      data-photo-viewer-media
+      className="group relative flex min-h-0 min-w-0 flex-1"
+      animate={{ opacity: isViewerContentVisible ? 1 : 0 }}
+      transition={Spring.presets.snappy}
+    >
+      <LoadingIndicator ref={loadingIndicatorRef} />
+      <m.div
+        className="h-full w-full"
+        style={{
+          x: contentX,
+          y: contentY,
+          scale: contentScale,
+          overflow: "hidden",
+          // 提升为独立合成层：拖拽时的位移/缩放变为纯 GPU 合成、无逐帧重栅格，
+          // 且避免拖拽开始瞬间才提升图层造成的首帧卡顿——顺滑跟手的关键。
+          willChange: "transform",
+        }}
+      >
+        <Swiper
+          modules={[Navigation, Virtual]}
+          spaceBetween={0}
+          slidesPerView={1}
+          initialSlide={currentIndex}
+          virtual
+          onSwiper={onSwiperReady}
+          onSlideChange={onSlideChange}
+          className="h-full w-full"
+          style={{ touchAction: isMobile ? "pan-x" : "pan-y" }}
+        >
+          {photos.map((photo, index) => {
+            const isCurrentImage = index === currentIndex;
+            const hideCurrentImage = isEntryAnimating && isCurrentImage;
+
+            return (
+              <SwiperSlide
+                key={photo.id}
+                className="flex items-center justify-center"
+                virtualIndex={index}
+              >
+                <m.div
+                  initial={{ opacity: 0.5, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={Spring.presets.smooth}
+                  className="relative flex h-full w-full items-center justify-center"
+                  style={{
+                    visibility: hideCurrentImage ? "hidden" : "visible",
+                  }}
+                >
+                  <ProgressiveImage
+                    photoId={photo.id}
+                    loadingIndicatorRef={loadingIndicatorRef}
+                    isCurrentImage={isCurrentImage}
+                    src={photo.originalUrl}
+                    thumbnailSrc={photo.thumbnailUrl}
+                    thumbHash={photo.thumbHash}
+                    alt={getPhotoAccessibleLabel(photo, t, i18n.language)}
+                    width={isCurrentImage ? currentPhoto.width : undefined}
+                    height={isCurrentImage ? currentPhoto.height : undefined}
+                    className="h-full w-full object-contain"
+                    shouldRenderHighRes={isViewerContentVisible && isOpen}
+                    fitOnViewportResize={isMobile}
+                    onZoomChange={isCurrentImage ? onZoomChange : undefined}
+                    onBlobSrcChange={
+                      isCurrentImage ? onBlobSrcChange : undefined
+                    }
+                    videoSource={
+                      photo.video?.type === "motion-photo"
+                        ? {
+                            type: "motion-photo",
+                            imageUrl: photo.originalUrl,
+                            offset: photo.video.offset,
+                            size: photo.video.size,
+                            presentationTimestamp:
+                              photo.video.presentationTimestamp,
+                          }
+                        : photo.video?.type === "live-photo"
+                          ? {
+                              type: "live-photo",
+                              videoUrl: photo.video.videoUrl,
+                            }
+                          : { type: "none" }
+                    }
+                    shouldAutoPlayVideoOnce={isCurrentImage}
+                    isHDR={photo.isHDR}
+                  />
+                </m.div>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+      </m.div>
+
+      {!isMobile && (
+        <Fragment>
+          {canGoPrevious && (
+            <button
+              type="button"
+              aria-label={t("photo.viewer.previous")}
+              title={t("photo.viewer.previous")}
+              className={`${viewerNavButtonClassName} left-4`}
+              onClick={onPrevious}
+            >
+              <i className="i-mingcute-left-line text-xl" aria-hidden="true" />
+            </button>
+          )}
+
+          {canGoNext && (
+            <button
+              type="button"
+              aria-label={t("photo.viewer.next")}
+              title={t("photo.viewer.next")}
+              className={`${viewerNavButtonClassName} right-4`}
+              onClick={onNext}
+            >
+              <i className="i-mingcute-right-line text-xl" aria-hidden="true" />
+            </button>
+          )}
+        </Fragment>
+      )}
+    </m.div>
+  );
+};

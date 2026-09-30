@@ -1,0 +1,203 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import {
+  createRegularImageCache,
+  ImageLoaderManager,
+} from "../image-loader-manager";
+
+vi.mock("~/lib/debug-log", () => ({
+  debugLog: vi.fn(),
+}));
+
+vi.mock("~/lib/file-type", () => ({
+  detectFileTypeFromBlob: vi.fn(async () => ({
+    ext: "jpg",
+    mime: "image/jpeg",
+  })),
+}));
+
+vi.mock("~/lib/image-convert", () => ({
+  // 单例已移除：ImageConversionService 现在按实例持有 ImageConverterManager。
+  ImageConverterManager: class {
+    convertImage = vi.fn(async (blob: Blob) => ({
+      kind: "original",
+      reason: "unhandled",
+      blob,
+    }));
+  },
+}));
+
+vi.mock("~/i18n", () => ({
+  i18nAtom: Symbol("i18nAtom"),
+}));
+
+vi.mock("~/lib/motion-photo-extractor", () => ({
+  extractMotionPhotoVideo: vi.fn(),
+}));
+
+vi.mock("~/lib/video-converter", () => ({
+  relabelMovAsMp4: vi.fn(),
+  needsVideoConversion: vi.fn(() => false),
+}));
+
+class MockXMLHttpRequest {
+  static instances: MockXMLHttpRequest[] = [];
+
+  onabort: (() => void) | null = null;
+  onerror: (() => void) | null = null;
+  onload: (() => void) | null = null;
+  onprogress: ((event: ProgressEvent) => void) | null = null;
+  response: Blob = new Blob([new Uint8Array([0xff, 0xd8, 0xff, 0xd9])], {
+    type: "image/jpeg",
+  });
+  responseType = "";
+  status = 200;
+
+  open = vi.fn();
+  send = vi.fn();
+  abort = vi.fn(() => this.onabort?.());
+  setRequestHeader = vi.fn();
+
+  constructor() {
+    MockXMLHttpRequest.instances.push(this);
+  }
+}
+
+describe("ImageLoaderManager", () => {
+  const originalCreateObjectURL = URL.createObjectURL;
+  const originalRevokeObjectURL = URL.revokeObjectURL;
+  const originalXMLHttpRequest = globalThis.XMLHttpRequest;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    MockXMLHttpRequest.instances = [];
+
+    vi.stubGlobal("XMLHttpRequest", MockXMLHttpRequest);
+    URL.createObjectURL = vi.fn(() => "blob:mock-image");
+    URL.revokeObjectURL = vi.fn();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.stubGlobal("XMLHttpRequest", originalXMLHttpRequest);
+    URL.createObjectURL = originalCreateObjectURL;
+    URL.revokeObjectURL = originalRevokeObjectURL;
+    vi.restoreAllMocks();
+  });
+
+  it("keeps high-resolution image requests CORS-simple by avoiding custom request headers", async () => {
+    const manager = new ImageLoaderManager();
+    const resultPromise = manager.loadImage(
+      "https://img.misfork.com/afilmory/A7C02615.jpg",
+    );
+
+    await vi.advanceTimersByTimeAsync(300);
+
+    const xhr = MockXMLHttpRequest.instances[0];
+    expect(xhr).toBeDefined();
+    expect(xhr.setRequestHeader).not.toHaveBeenCalled();
+
+    xhr.onload?.();
+
+    await expect(resultPromise).resolves.toEqual({
+      blobSrc: "blob:mock-image",
+      release: expect.any(Function),
+      blob: xhr.response,
+    });
+  });
+
+  it("starts high-priority detail image requests without the browsing delay", async () => {
+    const manager = new ImageLoaderManager();
+    const resultPromise = manager.loadImage(
+      "https://img.misfork.com/afilmory/A7C02616.jpg",
+      { priority: "high" },
+    );
+
+    await vi.advanceTimersByTimeAsync(0);
+
+    const xhr = MockXMLHttpRequest.instances[0];
+    expect(xhr).toBeDefined();
+
+    xhr.onload?.();
+
+    await expect(resultPromise).resolves.toEqual({
+      blobSrc: "blob:mock-image",
+      release: expect.any(Function),
+      blob: xhr.response,
+    });
+  });
+
+  it.each(["open", "send"] as const)(
+    "settles synchronous XHR %s failures and lets the viewer retry",
+    async (phase) => {
+      const error = new DOMException("Request blocked", "SecurityError");
+      vi.stubGlobal(
+        "XMLHttpRequest",
+        class extends MockXMLHttpRequest {
+          constructor() {
+            super();
+            this[phase].mockImplementation(() => {
+              throw error;
+            });
+          }
+        },
+      );
+      const manager = new ImageLoaderManager();
+      const onError = vi.fn();
+      const onLoadingStateUpdate = vi.fn();
+      const result = manager.loadImage("https://example.com/blocked.jpg", {
+        onError,
+        onLoadingStateUpdate,
+      });
+      const rejected = expect(result).rejects.toMatchObject({
+        stage: "fetch",
+        code: "network",
+        cause: error,
+      });
+      await vi.advanceTimersByTimeAsync(300);
+      await rejected;
+      expect(onError).toHaveBeenCalledOnce();
+      expect(onError).toHaveBeenCalledWith(
+        expect.objectContaining({ cause: error }),
+      );
+      expect(onLoadingStateUpdate).toHaveBeenLastCalledWith({
+        isVisible: false,
+      });
+
+      vi.stubGlobal("XMLHttpRequest", MockXMLHttpRequest);
+      const retry = manager.loadImage("https://example.com/retry.jpg");
+      await vi.advanceTimersByTimeAsync(300);
+      const xhr = MockXMLHttpRequest.instances.at(-1)!;
+      xhr.onload?.();
+      await expect(retry).resolves.toMatchObject({ blob: xhr.response });
+    },
+  );
+
+  it("returns cached regular images before starting another network request", async () => {
+    const cache = createRegularImageCache();
+    const firstManager = new ImageLoaderManager(cache);
+    const firstResultPromise = firstManager.loadImage(
+      "https://img.misfork.com/afilmory/A7C02615.jpg",
+    );
+
+    await vi.advanceTimersByTimeAsync(300);
+    MockXMLHttpRequest.instances[0]?.onload?.();
+    await expect(firstResultPromise).resolves.toEqual({
+      blobSrc: "blob:mock-image",
+      release: expect.any(Function),
+      blob: MockXMLHttpRequest.instances[0].response,
+    });
+
+    const secondManager = new ImageLoaderManager(cache);
+    const secondResult = await secondManager.loadImage(
+      "https://img.misfork.com/afilmory/A7C02615.jpg",
+    );
+
+    expect(secondResult).toEqual({
+      blobSrc: "blob:mock-image",
+      release: expect.any(Function),
+      blob: MockXMLHttpRequest.instances[0].response,
+    });
+    expect(MockXMLHttpRequest.instances).toHaveLength(1);
+  });
+});

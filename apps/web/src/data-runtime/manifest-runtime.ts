@@ -1,0 +1,115 @@
+import type { AfilmoryManifest } from "@afilmory/schema";
+import { parseManifestLenient } from "@afilmory/schema";
+
+import {
+  ensureBrowserRuntime,
+  setRuntimeManifest,
+} from "~/runtime/browser-runtime";
+
+import { parseWebDeliveryManifest } from "./delivery-manifest";
+import {
+  buildManifestRequestInit,
+  MANIFEST_REQUEST_TIMEOUT_MS,
+} from "./manifest-fetch-options";
+
+async function fetchManifest(url: string): Promise<unknown> {
+  const controller =
+    typeof AbortController !== "undefined" ? new AbortController() : null;
+  const timeoutId = globalThis.setTimeout(
+    () => controller?.abort(),
+    MANIFEST_REQUEST_TIMEOUT_MS,
+  );
+
+  try {
+    const response = await fetch(
+      url,
+      buildManifestRequestInit(controller?.signal),
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Manifest request failed: ${response.status} ${response.statusText}`.trim(),
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new Error(
+        `Manifest request timed out after ${MANIFEST_REQUEST_TIMEOUT_MS}ms`,
+      );
+    }
+    throw error;
+  } finally {
+    globalThis.clearTimeout(timeoutId);
+  }
+}
+
+function coerceManifest(input: unknown): AfilmoryManifest {
+  const delivery = parseWebDeliveryManifest(input);
+  if (delivery) {
+    const runtime = ensureBrowserRuntime();
+    if (!runtime.manifest) {
+      throw new Error("No manifest source was injected into the page.");
+    }
+    runtime.manifest.delivery = delivery.delivery;
+    setRuntimeManifest(delivery.manifest);
+    return delivery.manifest;
+  }
+
+  // 宽松解析：顶层结构损坏才抛错（冒泡到 bootstrap 显示 BootstrapError 诊断页）；
+  // 个别照片字段不合法只跳过该张，绝不让一张坏照片白屏整个图库。
+  const { manifest, skipped } = parseManifestLenient(input);
+  if (skipped.length > 0) {
+    console.warn(
+      `[manifest] Skipped ${skipped.length} invalid photo(s); rendering the remaining ${manifest.photos.length}.`,
+      skipped,
+    );
+  }
+  setRuntimeManifest(manifest);
+  return manifest;
+}
+
+export async function loadManifestRuntime(): Promise<AfilmoryManifest> {
+  const runtime = ensureBrowserRuntime();
+  const manifestRuntime = runtime.manifest;
+
+  if (!manifestRuntime) {
+    throw new Error("No manifest source was injected into the page.");
+  }
+
+  if ("data" in manifestRuntime && manifestRuntime.data) {
+    return coerceManifest(manifestRuntime.data);
+  }
+
+  const existingPromise = manifestRuntime.promise;
+  if (existingPromise) {
+    try {
+      return coerceManifest(await existingPromise);
+    } catch (error) {
+      manifestRuntime.promise = undefined;
+      throw error;
+    }
+  }
+
+  const manifestUrl =
+    manifestRuntime.mode === "external" ? manifestRuntime.url : undefined;
+  if (!manifestUrl) {
+    throw new Error("No manifest source was injected into the page.");
+  }
+
+  const manifestPromise = fetchManifest(manifestUrl).catch((error) => {
+    manifestRuntime.promise = undefined;
+    throw error;
+  });
+  manifestRuntime.promise = manifestPromise;
+
+  try {
+    return coerceManifest(await manifestPromise);
+  } catch (error) {
+    // 不只在 fetch 失败时清除——若 body 通过 schema 校验失败，缓存的 promise
+    // 也必须失效，否则下一次仍会拿到这个已损坏的结果（要再失败一次才自愈）。
+    manifestRuntime.promise = undefined;
+    throw error;
+  }
+}
