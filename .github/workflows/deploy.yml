@@ -52,12 +52,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build static gallery
-        run: pnpm build
       - name: Watermark photos
         run: node packages/builder/scripts/watermark.mjs photos photos-wm
         env:
           WATERMARK_TEXT: "gfrison.com"
+
+      - name: Build static gallery
+        run: pnpm build
 
       - name: Add SPA fallback for client-only routes
         run: cp apps/web/dist/index.html apps/web/dist/404.html
