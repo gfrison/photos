@@ -82,7 +82,7 @@
     "consola": "3.4.2",
     "daisyui": "5.7.28",
     "dotenv": "catalog:",
-    "execa": "9.6.0",
+    "execa": "10.0.1",
     "kolorist": "1.8.0",
     "linkedom": "0.18.13",
     "postcss": "8.5.28",
