@@ -1,1 +1,0 @@
-export { ImageConverterManager } from "./manager";
