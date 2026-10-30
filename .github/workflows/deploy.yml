@@ -28,6 +28,9 @@ jobs:
       - name: Build with Docker
         run: docker run -v "$PWD/config.yaml:/config/config.yaml" -v "$PWD/photos:/data/photos" -v "$PWD/output:/output" gfrison/afilmory-builder:latest
 
+      - name: Fix output permissions
+        run: sudo chmod -R 755 output
+
       - name: Add SPA fallback for client-only routes
         run: cp output/index.html output/404.html
 
