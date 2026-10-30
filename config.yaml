@@ -1,0 +1,57 @@
+# Afilmory static-site build configuration.
+# Any real environment variable (e.g. -e S3_SECRET_ACCESS_KEY=...) overrides the
+# matching value here, so keep secrets out of this file.
+
+# Deployment base path. Use "/" for a root deploy, or a subpath such as
+# "/photos" for a project page served at example.com/photos.
+basePath: /photos
+
+site:
+  name: "Giancarlo Frison — Photos"
+  title: "Giancarlo Frison — Photos"
+  description: "Photo stream by Giancarlo Frison."
+  url: https://gfrison.com/photos
+  language: en
+  accentColor: "#007bff"
+
+author:
+  name: "Giancarlo Frison"
+  url: https://gfrison.com
+  avatar: https://gfrison.com/assets/images/profile-g.png
+
+social:
+  github: gfrison
+  twitter: gfrison
+  rss: false
+
+# strip | coarse | exact — how precise embedded photo GPS location may be.
+photoLocationMode: coarse
+
+# AGPL corresponding-source attribution. Set these to label the deployed site's
+# source. Without them the build still succeeds but the footer is labeled non-exact.
+license:
+  # sourceUrl: https://github.com/OWNER/photos
+  # correspondingSourceUrl: https://github.com/OWNER/photos/tree/<sha>
+  # licenseUrl: https://github.com/OWNER/photos/blob/<sha>/LICENSE
+  # requireExactSource: false
+
+storage:
+  # local: read raw photos from a mounted folder (no credentials).
+  # s3:    read photos from S3-compatible object storage.
+  provider: local
+  local:
+    # Absolute path inside the container; mount your host photos here with
+    # `-v /host/path/to/photos:/data/photos`.
+    photosPath: /data/photos
+    # Public URL prefix for the copied originals in the output site.
+    baseUrl: /originals
+  # s3:
+  #   bucket: your-bucket-name
+  #   region: us-east-1
+  #   endpoint: https://s3.us-east-1.amazonaws.com
+  #   prefix: ""
+  #   customDomain: ""
+  #   excludeRegex: ""
+  #   # Prefer passing these via environment variables instead of this file:
+  #   accessKeyId: ""
+  #   secretAccessKey: ""

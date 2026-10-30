@@ -1,0 +1,1 @@
+docker run -v "$PWD/config.yaml:/config/config.yaml" -v "$PWD/photos:/data/photos" -v "$PWD/output:/output" gfrison/afilmory-builder:latest
