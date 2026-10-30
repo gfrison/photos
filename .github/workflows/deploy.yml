@@ -32,7 +32,7 @@ jobs:
         run: cp output/index.html output/404.html
 
       - name: Upload Build Artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: "./output"
 
