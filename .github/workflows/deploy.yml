@@ -24,9 +24,14 @@ jobs:
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
+      
+      - name: Watermark photos
+        run: node packages/builder/scripts/watermark.mjs photos photos-wm
+        env:
+          WATERMARK_TEXT: "gfrison.com"
 
       - name: Build with Docker
-        run: docker run -v "$PWD/config.yaml:/config/config.yaml" -v "$PWD/photos:/data/photos" -v "$PWD/output:/output" gfrison/afilmory-builder:latest
+        run: docker run -v "$PWD/config.yaml:/config/config.yaml" -v "$PWD/photos-wm:/data/photos" -v "$PWD/output:/output" gfrison/afilmory-builder:latest
 
       - name: Fix output permissions
         run: sudo chmod -R ugo+rX output && sudo chown -R runner:runner output
