@@ -9,7 +9,7 @@ basePath: /photos
 site:
   name: "Photos"
   title: "Giancarlo Frison — Photos"
-  description: "Photo stream by Giancarlo Frison."
+  description: "by Giancarlo Frison"
   url: https://gfrison.com/photos
   language: en
   accentColor: "#007bff"
