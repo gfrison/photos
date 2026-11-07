@@ -1,3 +1,5 @@
+*.xmp
+darktable_exported
 *-workspace
 node_modules
 .pnpm-store
