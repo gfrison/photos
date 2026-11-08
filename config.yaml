@@ -22,6 +22,7 @@ author:
 social:
   github: gfrison
   twitter: gfrison
+  home: https://gfrison.com
   rss: false
 
 # strip | coarse | exact — how precise embedded photo GPS location may be.
@@ -34,7 +35,7 @@ license:
   # correspondingSourceUrl: https://github.com/OWNER/photos/tree/<sha>
   # licenseUrl: https://github.com/OWNER/photos/blob/<sha>/LICENSE
   # requireExactSource: false
-
+google_analytics: G-3VTVTX5PBG
 storage:
   # local: read raw photos from a mounted folder (no credentials).
   # s3:    read photos from S3-compatible object storage.
